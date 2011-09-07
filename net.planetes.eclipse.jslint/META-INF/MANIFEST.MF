@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JSLint Validator Plugin for Eclipse
+Bundle-SymbolicName: net.planetes.eclipse.jslint;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: net.planetes.eclipse.jslint.Activator
+Bundle-Vendor: IoloTheBard and Planetes Networks
+Require-Bundle: org.apache.commons.io,
+ org.apache.commons.lang,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.debug.ui,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
+ org.eclipse.ui.console,
+ org.mozilla.javascript
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
