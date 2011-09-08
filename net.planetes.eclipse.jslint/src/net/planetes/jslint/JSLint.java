@@ -26,17 +26,18 @@ public class JSLint {
 		}
 	}
 
-	public JSLintData validate(String source) {
+	public JSLintData validate(String source, JSLintOptions options) {
 		Context ctx = Context.enter();
 		try {
 			Scriptable scope = ctx.initStandardObjects();
 
 			ctx.evaluateString(scope, jslintSource, "<jslint>", 1, null);
-
+			
 			ScriptableObject.putProperty(scope, "_source", source);
+			ScriptableObject.putProperty(scope, "_options", options.toJSObject(ctx, scope));
 
 			// TODO: support jslint options...
-			String script = "JSLINT(_source, {});\n";
+			String script = "JSLINT(_source, _options);\n";
 
 			boolean valid = (Boolean) ctx.evaluateString(scope, script,
 					"<jslint>", 1, null);

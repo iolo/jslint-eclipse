@@ -1,6 +1,5 @@
 package net.planetes.jslint;
 
-import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 
 public class JSLintData {
@@ -13,12 +12,8 @@ public class JSLintData {
 
 	public JSLintData(boolean valid, NativeObject nobj) {
 		this.valid = valid;
-		errors = nobj.has("errors", nobj) ? JSLintError
-				.fromNativeArray((NativeArray) nobj.get("errors", nobj))
-				: JSLintError.EMPTY_LIST;
-		functions = nobj.has("functions", nobj) ? JSLintFunction
-				.fromNativeArray((NativeArray) nobj.get("functions", nobj))
-				: JSLintFunction.EMPTY_LIST;
+		errors = JSLintError.fromJSObject(nobj.get("errors", nobj));
+		functions = JSLintFunction.fromJSObject(nobj.get("functions", nobj));
 		// TODO: more properties...
 		// globals
 		// member

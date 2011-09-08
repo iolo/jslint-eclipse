@@ -10,6 +10,7 @@ import net.planetes.jslint.JSLint;
 import net.planetes.jslint.JSLintData;
 import net.planetes.jslint.JSLintError;
 import net.planetes.jslint.JSLintFunction;
+import net.planetes.jslint.JSLintOptions;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IFile;
@@ -93,7 +94,12 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 			IOUtils.closeQuietly(in);
 		}
 
-		JSLintData data = jslint.validate(source);
+		JSLintOptions options = new JSLintOptions();
+		options.setOption("browser", true);
+		options.setOption("white", true);
+		options.setOption("vars", true);
+		
+		JSLintData data = jslint.validate(source, options);
 
 		if (data.isValid()) {
 			consoleStream.println("OK!");

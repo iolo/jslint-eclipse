@@ -3,6 +3,8 @@ package net.planetes.jslint;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.planetes.rhino.utils.RhinoUtils;
+
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 
@@ -15,10 +17,10 @@ public class JSLintFunction {
 	private final int last;
 
 	public JSLintFunction(NativeObject nobj) {
-		name = (String) nobj.get("name", nobj);
-		line = ((Number) nobj.get("line", nobj)).intValue();
+		name = RhinoUtils.getStringProperty(nobj, "name", "<unknown>");
+		line = RhinoUtils.getIntProperty(nobj, "line", 1);
+		last = RhinoUtils.getIntProperty(nobj, "line", -1);
 		// TODO: more properties...
-		last = 0;// ((Number) nobj.get("last", nobj)).intValue();
 	}
 
 	public String getName() {
@@ -33,10 +35,18 @@ public class JSLintFunction {
 		return last;
 	}
 
-	public static JSLintFunction[] fromNativeArray(NativeArray narray) {
-		if (narray == null) {
+	/**
+	 * convert a javascript array object to an array of JSLintFunction objects.
+	 * 
+	 * @param obj
+	 *            a javascript array object or {@literal null}.
+	 * @return an array of JSLintFunction objects
+	 */
+	public static JSLintFunction[] fromJSObject(Object obj) {
+		if (obj == null || !(obj instanceof NativeArray)) {
 			return EMPTY_LIST;
 		}
+		NativeArray narray = (NativeArray) obj;
 		int length = (int) narray.getLength();
 		List<JSLintFunction> result = new ArrayList<JSLintFunction>(length);
 		for (int i = 0; i < length; i++) {
