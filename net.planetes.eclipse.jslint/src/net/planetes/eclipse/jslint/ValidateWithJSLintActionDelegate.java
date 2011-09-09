@@ -30,19 +30,16 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 	private static final Pattern FILE_LINK_PATTERN = Pattern
 			.compile("\\(([a-zA-Z0-9.-/]+):([0-9]+):([0-9]+)\\)");
 
+	private static final int FILE_LINK_FILE_GROUP_INDEX = 1;
+
+	private static final int FILE_LINK_LINE_GROUP_INDEX = 2;
+
 	private static final Pattern FILE_LINK_LINE_QUALIFIER_PATTERN = Pattern
 			.compile("-->");
 
-	private final MessageConsole console;
-
-	private final JSLint jslint;
-
 	private IFile sourceFile;
 
-	public ValidateWithJSLintActionDelegate() throws IOException {
-		console = ConsoleUtils.getConsole(CONSOLE_NAME);
-		jslint = new JSLint();
-
+	public ValidateWithJSLintActionDelegate() {
 	}
 
 	//
@@ -61,7 +58,6 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 	@Override
 	public void run(IAction action) {
 		Display.getCurrent().asyncExec(this);
-		// run(); //syncExec
 	}
 
 	//
@@ -70,17 +66,20 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 
 	@Override
 	public void run() {
+		MessageConsole console = ConsoleUtils.getConsole(CONSOLE_NAME);
+
 		console.activate();
-
-		GenericFileLinkPatternMatchListener patternMatchListener = new GenericFileLinkPatternMatchListener(
-				sourceFile.getProject().getLocation(), FILE_LINK_PATTERN,
-				FILE_LINK_LINE_QUALIFIER_PATTERN, 1, 2);
-
-		console.addPatternMatchListener(patternMatchListener);
 
 		MessageConsoleStream consoleStream = console.newMessageStream();
 
-		consoleStream.print("Validate with JSLint... ");
+		JSLint jslint;
+		try {
+			jslint = new JSLint();
+		} catch (IOException e) {
+			consoleStream.println("Failed to read jslint source!");
+			e.printStackTrace();
+			return;
+		}
 
 		String source;
 		InputStream in = null;
@@ -88,6 +87,7 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 			in = sourceFile.getContents();
 			source = IOUtils.toString(in, sourceFile.getCharset());
 		} catch (Exception e) {
+			consoleStream.println("Failed to read javascript source!");
 			e.printStackTrace();
 			return;
 		} finally {
@@ -98,7 +98,9 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 		options.setOption("browser", true);
 		options.setOption("white", true);
 		options.setOption("vars", true);
-		
+
+		consoleStream.print("Validate with JSLint... ");
+
 		JSLintData data = jslint.validate(source, options);
 
 		if (data.isValid()) {
@@ -107,6 +109,18 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 			consoleStream.println("FAIL!");
 		}
 
+		consoleStream.println();
+		consoleStream.println("Options:");
+		consoleStream.println(options.toJSONString());
+
+		GenericFileLinkPatternMatchListener patternMatchListener = new GenericFileLinkPatternMatchListener(
+				sourceFile.getProject().getLocation(), FILE_LINK_PATTERN,
+				FILE_LINK_LINE_QUALIFIER_PATTERN, FILE_LINK_FILE_GROUP_INDEX,
+				FILE_LINK_LINE_GROUP_INDEX);
+
+		console.addPatternMatchListener(patternMatchListener);
+
+		consoleStream.println();
 		if (data.hasError()) {
 			consoleStream.println("Problems:");
 			for (JSLintError error : data.getErrors()) {
@@ -124,6 +138,7 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 			consoleStream.println("No Problems.");
 		}
 
+		consoleStream.println();
 		if (data.hasFunction()) {
 			consoleStream.println("Functions:");
 			for (JSLintFunction func : data.getFunctions()) {
@@ -138,6 +153,7 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 			consoleStream.println("No Functions.");
 		}
 
+		consoleStream.println("That's all folks!");
 		consoleStream.println();
 
 		// console.removePatternMatchListener(patternMatchListener);

@@ -5,6 +5,8 @@ import java.util.List;
 
 import net.planetes.rhino.utils.RhinoUtils;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 
@@ -38,6 +40,12 @@ public class JSLintError {
 
 	public String getEvidence() {
 		return evidence;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package net.planetes.jslint;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.mozilla.javascript.NativeObject;
 
 public class JSLintData {
@@ -39,5 +41,11 @@ public class JSLintData {
 
 	public JSLintFunction[] getFunctions() {
 		return functions;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

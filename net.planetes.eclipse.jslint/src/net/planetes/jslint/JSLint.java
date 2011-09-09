@@ -26,23 +26,32 @@ public class JSLint {
 		}
 	}
 
-	public JSLintData validate(String source, JSLintOptions options) {
-		Context ctx = Context.enter();
-		try {
-			Scriptable scope = ctx.initStandardObjects();
+	public JSLint(String jslintSource) {
+		this.jslintSource = jslintSource;
+	}
 
-			ctx.evaluateString(scope, jslintSource, "<jslint>", 1, null);
-			
+	public JSLint(InputStream in) throws IOException {
+		this(IOUtils.toString(in, "UTF-8"));
+	}
+
+	public JSLintData validate(String source, JSLintOptions options) {
+		Context context = Context.enter();
+		try {
+			Scriptable scope = context.initStandardObjects();
+
+			context.evaluateString(scope, jslintSource, "<jslint>", 1, null);
+
 			ScriptableObject.putProperty(scope, "_source", source);
-			ScriptableObject.putProperty(scope, "_options", options.toJSObject(ctx, scope));
+			ScriptableObject.putProperty(scope, "_options",
+					options.toJSObject(context, scope));
 
 			// TODO: support jslint options...
 			String script = "JSLINT(_source, _options);\n";
 
-			boolean valid = (Boolean) ctx.evaluateString(scope, script,
+			boolean valid = (Boolean) context.evaluateString(scope, script,
 					"<jslint>", 1, null);
 
-			return new JSLintData(valid, (NativeObject) ctx.evaluateString(
+			return new JSLintData(valid, (NativeObject) context.evaluateString(
 					scope, "JSLINT.data()", "<jslint>", 1, null));
 		} finally {
 			Context.exit();
