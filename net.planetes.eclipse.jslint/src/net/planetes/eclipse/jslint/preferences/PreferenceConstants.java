@@ -1,16 +1,10 @@
 package net.planetes.eclipse.jslint.preferences;
 
-/**
- * Constant definitions for plug-in preferences
- */
-public class PreferenceConstants {
+public interface PreferenceConstants {
 
-	public static final String P_PATH = "pathPreference";
-
-	public static final String P_BOOLEAN = "booleanPreference";
-
-	public static final String P_CHOICE = "choicePreference";
-
-	public static final String P_STRING = "stringPreference";
+	String P_JSLINT_FILE = "jlintFile";
+	String P_SHOW_PROBLEMS = "showProblems";
+	String P_SHOW_FUNCTIONS = "showFunctions";
+	String P_SHOW_GLOBALS = "showGlobals";
 
 }

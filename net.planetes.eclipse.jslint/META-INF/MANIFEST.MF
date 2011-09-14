@@ -16,3 +16,9 @@ Require-Bundle: org.apache.commons.io,
  org.mozilla.javascript
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: net.planetes.eclipse.jslint;
+  uses:="org.eclipse.jface.action,
+   org.eclipse.ui.plugin,
+   org.eclipse.ui.actions,
+   org.eclipse.jface.viewers,
+   org.osgi.framework"
