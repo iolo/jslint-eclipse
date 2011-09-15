@@ -23,8 +23,6 @@ public class PreferencesPage extends FieldEditorPreferencePage implements
 
 	@Override
 	public void createFieldEditors() {
-		// FIXME: separator and/or grouping
-
 		addField(new FileFieldEditor(PreferenceConstants.P_JSLINT_FILE,
 				"&JSLint File", getFieldEditorParent()));
 
@@ -37,9 +35,10 @@ public class PreferencesPage extends FieldEditorPreferencePage implements
 		addField(new BooleanFieldEditor(PreferenceConstants.P_SHOW_GLOBALS,
 				"Show &Globals", getFieldEditorParent()));
 
+		// FIXME: separator and/or grouping
 		for (JSLintOption option : JSLintOption.loadOptions()) {
 			String name = option.getName();
-			String description = option.getDescription();
+			String description = option.getDescription() + "(" + name + ")";
 			FieldEditor fieldEditor;
 			JSLintOption.Type type = option.getType();
 			if (type == JSLintOption.Type.STRING) {

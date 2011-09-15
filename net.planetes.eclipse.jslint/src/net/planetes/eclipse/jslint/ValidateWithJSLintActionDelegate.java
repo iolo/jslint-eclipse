@@ -178,11 +178,17 @@ public class ValidateWithJSLintActionDelegate extends ActionDelegate implements
 			String name = option.getName();
 			JSLintOption.Type type = option.getType();
 			if (type == JSLintOption.Type.BOOL) {
-				options.setOption(name, store.getBoolean(name));
+				if(store.getDefaultBoolean(name) != store.getBoolean(name)) {
+					options.setOption(name, store.getBoolean(name));
+				}
 			} else if (type == JSLintOption.Type.INT) {
-				options.setOption(name, store.getInt(name));
+				if(store.getDefaultInt(name) != store.getInt(name)) {
+					options.setOption(name, store.getInt(name));
+				}
 			} else if (type == JSLintOption.Type.STRING) {
-				options.setOption(name, store.getString(name));
+				if(store.getDefaultString(name) != store.getString(name)) {
+					options.setOption(name, store.getString(name));
+				}
 			}
 
 		}
